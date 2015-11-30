@@ -1,0 +1,14 @@
+C:\Users\raziel\Downloads\test_task-master\TestTask\bin\Debug\TestTask.exe.config
+C:\Users\raziel\Downloads\test_task-master\TestTask\bin\Debug\TestTask.exe
+C:\Users\raziel\Downloads\test_task-master\TestTask\bin\Debug\TestTask.pdb
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\View\MainWindow.g.cs
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\App.g.cs
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask_MarkupCompile.cache
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask_MarkupCompile.lref
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\View\MainWindow.baml
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.g.resources
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.Properties.Resources.resources
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.csproj.GenerateResource.Cache
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.exe
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.pdb
+C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.csprojResolveAssemblyReference.cache
