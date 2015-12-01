@@ -86,9 +86,16 @@
     <Grid>
         <DataGrid CanUserAddRows="False" ItemsSource="{Binding Files}"  AutoGenerateColumns="False"
                   CanUserDeleteRows="False" CanUserReorderColumns="False" 
-                  CanUserSortColumns="False" CanUserResizeRows="False" RowDetailsVisibilityMode="Collapsed" Margin="0,0,0,50" IsSynchronizedWithCurrentItem="True" CanUserResizeColumns="False" EnableColumnVirtualization="True" UseLayoutRounding="True" AreRowDetailsFrozen="True">
+                  CanUserSortColumns="False" CanUserResizeRows="False" RowDetailsVisibilityMode="Collapsed" Margin="0,0,0,55" IsSynchronizedWithCurrentItem="True" CanUserResizeColumns="False" EnableColumnVirtualization="True" UseLayoutRounding="True" AreRowDetailsFrozen="True">
 
             <DataGrid.Columns>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox x:Name="checkbox" IsChecked="{Binding Path=ischeck, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding chekall, Mode=TwoWay}" CommandParameter="{Binding}" ></CheckBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Icon">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -97,14 +104,15 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Name" Binding="{Binding Path=Name,UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn Header="Path" Binding="{Binding Path=Path,UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn Header="Created" Binding="{Binding Path=DateCreated,UpdateSourceTrigger=PropertyChanged}"/>
-                <DataGridTextColumn Header="Modified" Binding="{Binding Path=DateModified,UpdateSourceTrigger=PropertyChanged}"/>
-                
+                <DataGridTextColumn Header="Extension" Binding="{Binding Path=Extension,UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="Only path" Binding="{Binding Path=Path,UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="Created date" Binding="{Binding Path=DateCreated,UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="Modified date" Binding="{Binding Path=DateModified,UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTextColumn Header="Digital Signature" Binding="{Binding Path=Signature,UpdateSourceTrigger=PropertyChanged}"/>
                 <!--<DataGridTextColumn Header="Hash" Binding="{Binding Path=Hash, UpdateSourceTrigger=PropertyChanged}"/>-->
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="button" Content="Button" Command="{Binding StopScan, Mode=OneWay}" 
-                                        CommandParameter="{Binding}" Height="34" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="225" Style="{DynamicResource ButtonStyle1}" Margin="0,0,10,10"/>
+        <Button x:Name="checkbutton" Content="{Binding checkbuttonContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Command="{Binding chekall, Mode=OneWay}" CommandParameter="{Binding}" Margin="0,0,20,18" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
+        
     </Grid>
 </Window>

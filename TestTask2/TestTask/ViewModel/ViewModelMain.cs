@@ -20,7 +20,7 @@ namespace TestTask.ViewModel
     {
         ObservableCollection<file> _Files;
         ICommand _command;
-        public Queue<file> FilesQueue;
+        //public Queue<file> FilesQueue;
 
         //Thread filefinder;
         //Thread hashcalc;
@@ -28,11 +28,12 @@ namespace TestTask.ViewModel
         //Thread lastModified;
 
         Task filefinder;
-        Task hashcalc;
+        //Task hashcalc;
         Task icongeter;
-        Task getLastModified;
-        Task getDateCreated;
-
+        //Task getLastModified;
+        //Task getDateCreated;
+        //Task signaturegeter;
+        Task checkchanger;
         private CancellationToken ct;
         private CancellationTokenSource ts;
 
@@ -41,14 +42,15 @@ namespace TestTask.ViewModel
             ts = new CancellationTokenSource();
             ct = ts.Token;
             Files = new ObservableCollection<file>();
-            FilesQueue = new Queue<file>();
+            //FilesQueue = new Queue<file>();
 
             filefinder = new Task(TraverseTree);
             //hashcalc = new Thread(SetMD5HashFromFile);
             icongeter = new Task(SetIcon);
-            getLastModified = new Task(SetModifiedDate);
-            getDateCreated = new Task(SetCreatedDate);
-            
+            //getLastModified = new Task(SetModifiedDate);
+            //getDateCreated = new Task(SetCreatedDate);
+            //signaturegeter = new Task(GetSignature);
+            checkchanger = new Task(checkchange);
 
             //filefinder.Name = "FileFinder";
             //filefinder.IsBackground = true;
@@ -62,11 +64,15 @@ namespace TestTask.ViewModel
 
             filefinder.Start();
             //hashcalc.Start();
-            getDateCreated.Start();
-            getLastModified.Start();
+            //getDateCreated.Start();
+            //getLastModified.Start();
             icongeter.Start();
+            checkchanger.Start();
 
         }
+
+        
+
         public ObservableCollection<file> Files
         {
             get
@@ -114,10 +120,9 @@ namespace TestTask.ViewModel
                     int i = 0;
                     while (i < dirinfo.Length)
                     {
-                        FilesQueue.Enqueue(new file(dirinfo[i].Name, string.Empty, null, dirinfo[i].FullName, string.Empty, string.Empty));
                         Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
                         {
-                            Files.Add(new file(dirinfo[i].Name, string.Empty, null, dirinfo[i].FullName, string.Empty, string.Empty)); // Add row on UI thread 
+                            Files.Add(new file(dirinfo[i].Name, dirinfo[i].FullName, dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(), dirinfo[i].Extension, allCkeck)); // Add row on UI thread 
                         }));
                         //Files.Add(new file(dirinfo[i].Name, string.Empty, null, dirinfo[i].FullName));
                         ++i;
@@ -174,46 +179,46 @@ namespace TestTask.ViewModel
                 }
             }
         }
-        public void SetMD5HashFromFile()
-        {
-            Thread.Sleep(2000);
-            int i = 0;
-            while (FilesQueue.Count > 0)
-            {
+        //public void SetMD5HashFromFile()
+        //{
+        //    Thread.Sleep(2000);
+        //    int i = 0;
+        //    while (FilesQueue.Count > 0)
+        //    {
 
-                try
-                {
-                    lock (FilesQueue)
-                    {
-                        file temp = FilesQueue.Dequeue();
-                        var md5 = MD5.Create();
-                        var stream = File.OpenRead(temp.Path);
-                        Files[i].Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
-                        ++i;
-                    }
-                }
-                catch (System.IO.IOException e)
-                {
-                    Files[i].Hash = "has not access";
-                    ++i;
-                    continue;
-                }
-                catch (System.UnauthorizedAccessException e)
-                {
-                    Files[i].Hash = "Access deny";
-                    ++i;
-                    continue;
-                }
-                catch (Exception)
-                {
-                    Files[i].Hash = "Access deny";
-                    ++i;
-                    continue;
-                }
+        //        try
+        //        {
+        //            lock (FilesQueue)
+        //            {
+        //                file temp = FilesQueue.Dequeue();
+        //                var md5 = MD5.Create();
+        //                var stream = File.OpenRead(temp.Path);
+        //                Files[i].Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+        //                ++i;
+        //            }
+        //        }
+        //        catch (System.IO.IOException e)
+        //        {
+        //            Files[i].Hash = "has not access";
+        //            ++i;
+        //            continue;
+        //        }
+        //        catch (System.UnauthorizedAccessException e)
+        //        {
+        //            Files[i].Hash = "Access deny";
+        //            ++i;
+        //            continue;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            Files[i].Hash = "Access deny";
+        //            ++i;
+        //            continue;
+        //        }
 
 
-            }
-        }
+        //    }
+        //}
         public void SetIcon()
         {
             Thread.Sleep(2000);
@@ -235,8 +240,58 @@ namespace TestTask.ViewModel
                 }
             }
         }
+        public void checkchange()
+        {
+            Thread.Sleep(2000);
+            int i = 0;
+            while (i < Files.Count)
+            {
+                lock (Files)
+                {
+                    Files[i].ischeck = allCkeck;
+                    ++i;
+                }
+            }
+        }
 
-        public ICommand StopScan
+
+        //public ICommand StopScan
+        //{
+        //    get
+        //    {
+        //        if (_command == null)
+        //        {
+        //            _command = new file.DelegateCommand(CanExecute, Execute);
+        //        }
+        //        return _command;
+        //    }
+        //}
+        //bool isStop = false;
+        //private void Execute(object parameter)
+        //{
+        //    if (!isStop)
+        //    {
+        //        ts.Cancel();
+        //        isStop = true;
+        //    }
+        //    else
+        //    {
+        //        filefinder.Start();
+        //        //hashcalc.Start();
+        //        icongeter.Start();
+        //        //getLastModified.Start();
+        //        //getDateCreated.Start();
+        //    }
+        //}
+        //private bool CanExecute(object parameter)
+        //{
+        //    return true;
+        //}
+
+
+        bool allCkeck = false;
+        string checkbuttonContent = "Check All";
+        public ICommand chekall
         {
             get
             {
@@ -247,23 +302,19 @@ namespace TestTask.ViewModel
                 return _command;
             }
         }
-        bool isStop = false;
         private void Execute(object parameter)
         {
-            if (!isStop)
+            if (!allCkeck)
             {
-                ts.Cancel();
+                checkbuttonContent = "Uncheck All";
+                allCkeck = true;
             }
             else
             {
-                filefinder.Start();
-                hashcalc.Start();
-                icongeter.Start();
-                getLastModified.Start();
-                getDateCreated.Start();
+                checkbuttonContent = "Check All";
+                allCkeck = false;
             }
         }
-
         private bool CanExecute(object parameter)
         {
             return true;

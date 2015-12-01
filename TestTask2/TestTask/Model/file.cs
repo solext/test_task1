@@ -19,13 +19,16 @@ namespace TestTask.Model
         string _path = string.Empty;
         string _dateCreated = string.Empty;
         string _dateModified = string.Empty;
+        string _extension = string.Empty;
+        string _signature = string.Empty;
+        bool _ischeck = false;
         BitmapSource _icon;
 
         public file()
         {
 
         }
-        public file(string name, string hash, BitmapSource icon, string path, string dateModofied, string dateCreated)
+        public file(string name, string path, string dateModofied, string dateCreated, string extension, bool ischek, string hash = "", BitmapSource icon = null, string signature = "")
         {
             this._name = name;
             this._hash = hash;
@@ -33,6 +36,9 @@ namespace TestTask.Model
             this._path = path;
             this._dateModified = dateModofied;
             this._dateCreated = dateCreated;
+            this._extension = extension;
+            this._signature = signature;
+            this._ischeck = ischek;
         }
         
         public string Name
@@ -107,7 +113,42 @@ namespace TestTask.Model
                 OnPropertyChanged("DateCreated");
             }
         }
-
+        public string Extension
+        {
+            get
+            {
+                return _extension;
+            }
+            set
+            {
+                _extension = value;
+                OnPropertyChanged("Extension");
+            }
+        }
+        public string Signature
+        {
+            get
+            {
+                return _signature;
+            }
+            set
+            {
+                _signature = value;
+                OnPropertyChanged("Signature");
+            }
+        }
+        public bool ischeck
+        {
+            get
+            {
+                return _ischeck;
+            }
+            set
+            {
+                _ischeck = value;
+                OnPropertyChanged("ischeck");
+            }
+        }
         public class DelegateCommand : ICommand
         {
 
