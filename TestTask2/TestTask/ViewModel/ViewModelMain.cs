@@ -27,20 +27,20 @@ namespace TestTask.ViewModel
         //Thread icongeter;
         //Thread lastModified;
 
-        Task filefinder;
+        private Task filefinder;
         //Task hashcalc;
-        Task icongeter;
+        private Task icongeter;
         //Task getLastModified;
         //Task getDateCreated;
         //Task signaturegeter;
-        Task checkchanger;
-        private CancellationToken ct;
-        private CancellationTokenSource ts;
+        private Task checkchanger;
+        //private CancellationToken ct;
+        //private CancellationTokenSource ts;
 
         public ViewModelMain()
         {
-            ts = new CancellationTokenSource();
-            ct = ts.Token;
+            //ts = new CancellationTokenSource();
+            //ct = ts.Token;
             Files = new ObservableCollection<file>();
             //FilesQueue = new Queue<file>();
 
@@ -122,7 +122,7 @@ namespace TestTask.ViewModel
                     {
                         Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
                         {
-                            Files.Add(new file(dirinfo[i].Name, dirinfo[i].FullName, dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(), dirinfo[i].Extension, allCkeck)); // Add row on UI thread 
+                            Files.Add(new file(dirinfo[i].Name, dirinfo[i].FullName, dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(), dirinfo[i].Extension, allCheck)); // Add row on UI thread 
                         }));
                         //Files.Add(new file(dirinfo[i].Name, string.Empty, null, dirinfo[i].FullName));
                         ++i;
@@ -145,40 +145,40 @@ namespace TestTask.ViewModel
                 }
                 foreach (string str in subDirs)
                     dirs.Push(str);
-                if(ct.IsCancellationRequested)
-                    break;
             }
         }
 
-        public void SetModifiedDate()
-        {
-            Thread.Sleep(2000);
-            int i = 0;
-            while (i < Files.Count)
-            {
-                lock (Files)
-                {
-                    var dtmod = System.IO.File.GetLastWriteTime(Files[i].Path).ToString("dd/MM/yy HH:mm:ss");
-                    Files[i].DateModified = dtmod;
-                    ++i;
+        //public void SetModifiedDate()
+        //{
+        //    //Thread.Sleep(2000);
+        //    int i = 0;
+        //    while (i < Files.Count)
+        //    {
+        //        lock (Files)
+        //        {
+        //            var dtmod = System.IO.File.GetLastWriteTime(Files[i].Path).ToString("dd/MM/yy HH:mm:ss");
+        //            Files[i].DateModified = dtmod;
+        //            ++i;
 
-                }
-            }
-        }
-        public void SetCreatedDate()
-        {
-            Thread.Sleep(2000);
-            int i = 0;
-            while (i < Files.Count)
-            {
-                lock (Files)
-                {
-                    var dtcr = System.IO.File.GetCreationTime(Files[i].Path).ToString("dd/MM/yy HH:mm:ss");
-                    Files[i].DateCreated = dtcr;
-                    ++i;
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
+
+        //public void SetCreatedDate()
+        //{
+        //    //Thread.Sleep(2000);
+        //    int i = 0;
+        //    while (i < Files.Count)
+        //    {
+        //        lock (Files)
+        //        {
+        //            var dtcr = System.IO.File.GetCreationTime(Files[i].Path).ToString("dd/MM/yy HH:mm:ss");
+        //            Files[i].DateCreated = dtcr;
+        //            ++i;
+        //        }
+        //    }
+        //}
+
         //public void SetMD5HashFromFile()
         //{
         //    Thread.Sleep(2000);
@@ -221,35 +221,51 @@ namespace TestTask.ViewModel
         //}
         public void SetIcon()
         {
-            Thread.Sleep(2000);
             int i = 0;
-            while (i < Files.Count)
+            //Thread.Sleep(2000);
+            while (true)
             {
-                lock (Files)
+                if(Files.Count == 0)
+                    continue;
+                while (i < Files.Count)
                 {
-                    var sysicon = System.Drawing.Icon.ExtractAssociatedIcon(Files[i].Path);
-                    var bmpSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
-                                sysicon.Handle,
-                                System.Windows.Int32Rect.Empty,
-                                System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-                    bmpSrc.Freeze();
-                    Files[i].Icon = bmpSrc;
-                    Files[i].Icon.Freeze();
-                    ++i;
+                    lock (Files)
+                    {
+                        var sysicon = System.Drawing.Icon.ExtractAssociatedIcon(Files[i].Path);
+                        var bmpSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
+                            sysicon.Handle,
+                            System.Windows.Int32Rect.Empty,
+                            System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                        bmpSrc.Freeze();
+                        Files[i].Icon = bmpSrc;
+                        Files[i].Icon.Freeze();
+                        ++i;
 
+                    }
                 }
             }
         }
         public void checkchange()
         {
-            Thread.Sleep(2000);
             int i = 0;
-            while (i < Files.Count)
+            bool check = allCheck;
+            while (true)
             {
-                lock (Files)
+                if (Files.Count == 0)
+                    continue;
+                while (i < Files.Count)
                 {
-                    Files[i].ischeck = allCkeck;
-                    ++i;
+                    lock (Files)
+                    {
+                        
+                        if (!Equals(check,allCheck))
+                        {
+                            i = 0;
+                            check = allCheck;
+                        }
+                        Files[i].ischeck = check;
+                        ++i;
+                    }
                 }
             }
         }
@@ -289,7 +305,7 @@ namespace TestTask.ViewModel
         //}
 
 
-        bool allCkeck = false;
+        bool allCheck = false;
         string checkbuttonContent = "Check All";
         public ICommand chekall
         {
@@ -304,15 +320,15 @@ namespace TestTask.ViewModel
         }
         private void Execute(object parameter)
         {
-            if (!allCkeck)
+            if (!allCheck)
             {
                 checkbuttonContent = "Uncheck All";
-                allCkeck = true;
+                allCheck = true;
             }
             else
             {
                 checkbuttonContent = "Check All";
-                allCkeck = false;
+                allCheck = false;
             }
         }
         private bool CanExecute(object parameter)

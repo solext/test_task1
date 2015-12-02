@@ -12,3 +12,17 @@ C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.csproj.Ge
 C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.exe
 C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.pdb
 C:\Users\raziel\Downloads\test_task-master\TestTask\obj\Debug\TestTask.csprojResolveAssemblyReference.cache
+E:\GitHub\test_task1\TestTask2\TestTask\bin\Debug\TestTask.exe.config
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.exe
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.pdb
+E:\GitHub\test_task1\TestTask2\TestTask\bin\Debug\TestTask.exe
+E:\GitHub\test_task1\TestTask2\TestTask\bin\Debug\TestTask.pdb
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.csprojResolveAssemblyReference.cache
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\View\MainWindow.g.cs
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\App.g.cs
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask_MarkupCompile.cache
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask_MarkupCompile.lref
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\View\MainWindow.baml
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.g.resources
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.Properties.Resources.resources
+E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.csproj.GenerateResource.Cache
