@@ -20,52 +20,23 @@ namespace TestTask.ViewModel
     {
         ObservableCollection<file> _Files;
         ICommand _command;
-        //public Queue<file> FilesQueue;
-
-        //Thread filefinder;
-        //Thread hashcalc;
-        //Thread icongeter;
-        //Thread lastModified;
 
         private Task filefinder;
-        //Task hashcalc;
+        private Task hashcalc;
         private Task icongeter;
-        //Task getLastModified;
-        //Task getDateCreated;
-        //Task signaturegeter;
         private Task checkchanger;
-        //private CancellationToken ct;
-        //private CancellationTokenSource ts;
 
         public ViewModelMain()
         {
-            //ts = new CancellationTokenSource();
-            //ct = ts.Token;
             Files = new ObservableCollection<file>();
-            //FilesQueue = new Queue<file>();
 
             filefinder = new Task(TraverseTree);
-            //hashcalc = new Thread(SetMD5HashFromFile);
+            hashcalc = new Task(SetMD5HashFromFile);
             icongeter = new Task(SetIcon);
-            //getLastModified = new Task(SetModifiedDate);
-            //getDateCreated = new Task(SetCreatedDate);
-            //signaturegeter = new Task(GetSignature);
             checkchanger = new Task(checkchange);
 
-            //filefinder.Name = "FileFinder";
-            //filefinder.IsBackground = true;
-            //filefinder.Priority = ThreadPriority.Highest;
-            ////hashcalc.Name = "hashcalc";
-            ////hashcalc.IsBackground = true;
-            //icongeter.Name = "icongeter";
-            //icongeter.IsBackground = true;
-            //lastModified.Name = "lastModified";
-            //lastModified.IsBackground = true;
-
             filefinder.Start();
-            //hashcalc.Start();
-            //getDateCreated.Start();
-            //getLastModified.Start();
+            hashcalc.Start();
             icongeter.Start();
             checkchanger.Start();
 
@@ -148,81 +119,50 @@ namespace TestTask.ViewModel
             }
         }
 
-        //public void SetModifiedDate()
-        //{
-        //    //Thread.Sleep(2000);
-        //    int i = 0;
-        //    while (i < Files.Count)
-        //    {
-        //        lock (Files)
-        //        {
-        //            var dtmod = System.IO.File.GetLastWriteTime(Files[i].Path).ToString("dd/MM/yy HH:mm:ss");
-        //            Files[i].DateModified = dtmod;
-        //            ++i;
+        public void SetMD5HashFromFile()
+        {
+            int i = 0;
+            while (true) 
+            {
+                if (Files.Count == 0)
+                    continue;
+                while (i < Files.Count)
+                {
+                    try
+                    {
+                        lock (Files)
+                        {
+                            var md5 = MD5.Create();
+                            var stream = File.OpenRead(Files[i].Path);
+                            Files[i].Signature = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                            ++i;
+                        }
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        Files[i].Signature = "has not access";
+                        ++i;
+                        continue;
+                    }
+                    catch (System.UnauthorizedAccessException e)
+                    {
+                        Files[i].Signature = "Access deny";
+                        ++i;
+                        continue;
+                    }
+                    catch (Exception)
+                    {
+                        Files[i].Signature = "Access deny";
+                        ++i;
+                        continue;
+                    }
+                }
+            }
+        }
 
-        //        }
-        //    }
-        //}
-
-        //public void SetCreatedDate()
-        //{
-        //    //Thread.Sleep(2000);
-        //    int i = 0;
-        //    while (i < Files.Count)
-        //    {
-        //        lock (Files)
-        //        {
-        //            var dtcr = System.IO.File.GetCreationTime(Files[i].Path).ToString("dd/MM/yy HH:mm:ss");
-        //            Files[i].DateCreated = dtcr;
-        //            ++i;
-        //        }
-        //    }
-        //}
-
-        //public void SetMD5HashFromFile()
-        //{
-        //    Thread.Sleep(2000);
-        //    int i = 0;
-        //    while (FilesQueue.Count > 0)
-        //    {
-
-        //        try
-        //        {
-        //            lock (FilesQueue)
-        //            {
-        //                file temp = FilesQueue.Dequeue();
-        //                var md5 = MD5.Create();
-        //                var stream = File.OpenRead(temp.Path);
-        //                Files[i].Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
-        //                ++i;
-        //            }
-        //        }
-        //        catch (System.IO.IOException e)
-        //        {
-        //            Files[i].Hash = "has not access";
-        //            ++i;
-        //            continue;
-        //        }
-        //        catch (System.UnauthorizedAccessException e)
-        //        {
-        //            Files[i].Hash = "Access deny";
-        //            ++i;
-        //            continue;
-        //        }
-        //        catch (Exception)
-        //        {
-        //            Files[i].Hash = "Access deny";
-        //            ++i;
-        //            continue;
-        //        }
-
-
-        //    }
-        //}
         public void SetIcon()
         {
             int i = 0;
-            //Thread.Sleep(2000);
             while (true)
             {
                 if(Files.Count == 0)
@@ -245,6 +185,7 @@ namespace TestTask.ViewModel
                 }
             }
         }
+
         public void checkchange()
         {
             int i = 0;
@@ -269,7 +210,6 @@ namespace TestTask.ViewModel
                 }
             }
         }
-
 
         //public ICommand StopScan
         //{
@@ -303,7 +243,6 @@ namespace TestTask.ViewModel
         //{
         //    return true;
         //}
-
 
         bool allCheck = false;
         string checkbuttonContent = "Check All";
