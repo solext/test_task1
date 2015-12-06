@@ -13,6 +13,8 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Threading;
+using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TestTask.ViewModel
 {
@@ -20,7 +22,7 @@ namespace TestTask.ViewModel
     {
         ObservableCollection<file> _Files;
         ICommand _command;
-        //public Queue<file> FilesQueue;
+        public Queue<file> FilesQueue;
 
         //Thread filefinder;
         //Thread hashcalc;
@@ -28,11 +30,11 @@ namespace TestTask.ViewModel
         //Thread lastModified;
 
         private Task filefinder;
-        //Task hashcalc;
+        private Task hashcalc;
         private Task icongeter;
         //Task getLastModified;
         //Task getDateCreated;
-        //Task signaturegeter;
+        private Task signaturegeter;
         private Task checkchanger;
         //private CancellationToken ct;
         //private CancellationTokenSource ts;
@@ -42,14 +44,14 @@ namespace TestTask.ViewModel
             //ts = new CancellationTokenSource();
             //ct = ts.Token;
             Files = new ObservableCollection<file>();
-            //FilesQueue = new Queue<file>();
+            FilesQueue = new Queue<file>();
 
             filefinder = new Task(TraverseTree);
-            //hashcalc = new Thread(SetMD5HashFromFile);
+            hashcalc = new Task(SetMD5HashFromFile);
             icongeter = new Task(SetIcon);
             //getLastModified = new Task(SetModifiedDate);
             //getDateCreated = new Task(SetCreatedDate);
-            //signaturegeter = new Task(GetSignature);
+            signaturegeter = new Task(SetDigitalSignature);
             checkchanger = new Task(checkchange);
 
             //filefinder.Name = "FileFinder";
@@ -63,12 +65,12 @@ namespace TestTask.ViewModel
             //lastModified.IsBackground = true;
 
             filefinder.Start();
-            //hashcalc.Start();
+            hashcalc.Start();
             //getDateCreated.Start();
             //getLastModified.Start();
             icongeter.Start();
             checkchanger.Start();
-
+            signaturegeter.Start();
         }
 
         
@@ -122,6 +124,7 @@ namespace TestTask.ViewModel
                     {
                         Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
                         {
+                            FilesQueue.Enqueue(new file(dirinfo[i].Name, dirinfo[i].FullName, dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(), dirinfo[i].Extension, allCheck));
                             Files.Add(new file(dirinfo[i].Name, dirinfo[i].FullName, dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(), dirinfo[i].Extension, allCheck)); // Add row on UI thread 
                         }));
                         //Files.Add(new file(dirinfo[i].Name, string.Empty, null, dirinfo[i].FullName));
@@ -269,8 +272,96 @@ namespace TestTask.ViewModel
                 }
             }
         }
-
-
+        public void SetMD5HashFromFile()
+        {
+            int i = 0;
+            while (true)
+            {
+                if (Files.Count == 0)
+                    continue;
+                while (i < Files.Count)
+                {
+                    try
+                    {
+                        lock (FilesQueue)
+                        {
+                            file temp = FilesQueue.Dequeue();
+                            var md5 = MD5.Create();
+                            var stream = File.OpenRead(temp.Path);
+                            Files[i].Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty);
+                            ++i;
+                        }
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        Files[i].Hash = "has not access";
+                        ++i;
+                        continue;
+                    }
+                    catch (System.UnauthorizedAccessException e)
+                    {
+                        Files[i].Hash = "Access deny";
+                        ++i;
+                        continue;
+                    }
+                    catch (Exception)
+                    {
+                        Files[i].Hash = "Access deny";
+                        ++i;
+                        continue;
+                    }
+                }
+            }
+        }
+        public void SetDigitalSignature()
+        {
+            int i = 0;
+            while (true)
+            {
+                if (Files.Count == 0)
+                    continue;
+                while (i < Files.Count)
+                {
+                    try
+                    {
+                        lock (Files)
+                        {
+                            Assembly assembly = Assembly.LoadFrom(Files[i].Path);
+                            Module module = assembly.GetModules().First();
+                            X509Certificate certificate = module.GetSignerCertificate();
+                            if (certificate == null)
+                            {
+                                Files[i].Signature = "NO";
+                                ++i;
+                            }
+                            else
+                            {
+                                Files[i].Signature = "YES";
+                                ++i;
+                            }
+                        }
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        Files[i].Signature = "has not access";
+                        ++i;
+                        continue;
+                    }
+                    catch (System.UnauthorizedAccessException e)
+                    {
+                        Files[i].Signature = "Access deny";
+                        ++i;
+                        continue;
+                    }
+                    catch (Exception)
+                    {
+                        Files[i].Signature = "Access deny";
+                        ++i;
+                        continue;
+                    }
+                }
+            }
+        }
         //public ICommand StopScan
         //{
         //    get

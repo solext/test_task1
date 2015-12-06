@@ -26,3 +26,17 @@ E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\View\MainWindow.baml
 E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.g.resources
 E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.Properties.Resources.resources
 E:\GitHub\test_task1\TestTask2\TestTask\obj\Debug\TestTask.csproj.GenerateResource.Cache
+E:\WORK\TestTask2\TestTask\bin\Debug\TestTask.exe.config
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask.exe
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask.pdb
+E:\WORK\TestTask2\TestTask\bin\Debug\TestTask.exe
+E:\WORK\TestTask2\TestTask\bin\Debug\TestTask.pdb
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask.csprojResolveAssemblyReference.cache
+E:\WORK\TestTask2\TestTask\obj\Debug\View\MainWindow.g.cs
+E:\WORK\TestTask2\TestTask\obj\Debug\App.g.cs
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask_MarkupCompile.cache
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask_MarkupCompile.lref
+E:\WORK\TestTask2\TestTask\obj\Debug\View\MainWindow.baml
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask.g.resources
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask.Properties.Resources.resources
+E:\WORK\TestTask2\TestTask\obj\Debug\TestTask.csproj.GenerateResource.Cache
