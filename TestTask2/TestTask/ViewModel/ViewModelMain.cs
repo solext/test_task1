@@ -419,7 +419,6 @@ namespace TestTask.ViewModel
 
 
         bool allCheck = false;
-        string checkbuttonContent = "Check All";
         public ICommand chekall
         {
             get
@@ -435,12 +434,10 @@ namespace TestTask.ViewModel
         {
             if (!allCheck)
             {
-                checkbuttonContent = "Uncheck All";
                 allCheck = true;
             }
             else
             {
-                checkbuttonContent = "Check All";
                 allCheck = false;
             }
         }

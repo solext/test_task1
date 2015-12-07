@@ -24,5 +24,15 @@ namespace TestTask.ViewModel
 
             DataContext = new ViewModelMain();
         }
+
+        private void checkbutton_Click(object sender, RoutedEventArgs e)
+        {
+            if (checkbutton.Content.ToString() != "Check All")
+            {
+                checkbutton.Content = "Check All";
+            }
+            else
+                checkbutton.Content = "Unheck All";
+        }
     }
 }
