@@ -39,6 +39,10 @@ namespace TestTask.ViewModel
         //private CancellationToken ct;
         //private CancellationTokenSource ts;
 
+        private readonly DriveInfo[] _drives = DriveInfo.GetDrives();
+        private int _i = 0;
+        private string root = "";
+
         public ViewModelMain()
         {
             //ts = new CancellationTokenSource();
@@ -53,7 +57,8 @@ namespace TestTask.ViewModel
             //getDateCreated = new Task(SetCreatedDate);
             signaturegeter = new Task(SetDigitalSignature);
             checkchanger = new Task(checkchange);
-
+            
+            root = _drives[_i].ToString();
             //filefinder.Name = "FileFinder";
             //filefinder.IsBackground = true;
             //filefinder.Priority = ThreadPriority.Highest;
@@ -88,66 +93,83 @@ namespace TestTask.ViewModel
             }
         }
 
+        private void WorkCompleted()
+        {
+            _i++;
+            if(_i == _drives.Length)
+                return;
+            root = _drives[_i].ToString();
+        }
+
         public void TraverseTree()
         {
-            const string root = @"C:\";
             Stack<string> dirs = new Stack<string>();
-            if (!System.IO.Directory.Exists(root))
+            while (_drives.Length != _i)
             {
-                throw new ArgumentException();
-            }
-            dirs.Push(root);
+                if (!System.IO.Directory.Exists(root))
+                {
+                    WorkCompleted();
+                    //throw new ArgumentException();
+                    continue;
+                }
+                dirs.Push(root);
 
-            while (dirs.Count > 0)
-            {
-                string currentDir = dirs.Pop();
-                string[] subDirs;
-                try
+                while (dirs.Count > 0)
                 {
-                    subDirs = System.IO.Directory.GetDirectories(currentDir);
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                catch (System.IO.DirectoryNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                try
-                {
-                    FileInfo[] dirinfo = new DirectoryInfo(currentDir).GetFiles();
-                    int i = 0;
-                    while (i < dirinfo.Length)
+                    string currentDir = dirs.Pop();
+                    string[] subDirs;
+                    try
                     {
-                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
-                        {
-                            FilesQueue.Enqueue(new file(dirinfo[i].Name, dirinfo[i].FullName, dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(), dirinfo[i].Extension, allCheck));
-                            Files.Add(new file(dirinfo[i].Name, dirinfo[i].FullName, dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(), dirinfo[i].Extension, allCheck)); // Add row on UI thread 
-                        }));
-                        //Files.Add(new file(dirinfo[i].Name, string.Empty, null, dirinfo[i].FullName));
-                        ++i;
+                        subDirs = System.IO.Directory.GetDirectories(currentDir);
                     }
-                }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        continue;
+                    }
+                    catch (System.IO.DirectoryNotFoundException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        continue;
+                    }
+                    try
+                    {
+                        FileInfo[] dirinfo = new DirectoryInfo(currentDir).GetFiles();
+                        int i = 0;
+                        while (i < dirinfo.Length)
+                        {
+                            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() =>
+                            {
+                                FilesQueue.Enqueue(new file(dirinfo[i].Name, dirinfo[i].FullName,
+                                    dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(),
+                                    dirinfo[i].Extension, allCheck));
+                                Files.Add(new file(dirinfo[i].Name, dirinfo[i].FullName,
+                                    dirinfo[i].LastWriteTime.ToString(), dirinfo[i].CreationTime.ToString(),
+                                    dirinfo[i].Extension, allCheck)); // Add row on UI thread 
+                            }));
+                            //Files.Add(new file(dirinfo[i].Name, string.Empty, null, dirinfo[i].FullName));
+                            ++i;
+                        }
+                    }
 
-                catch (UnauthorizedAccessException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
+                    catch (UnauthorizedAccessException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        continue;
+                    }
+                    catch (System.IO.DirectoryNotFoundException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        continue;
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                    foreach (string str in subDirs)
+                        dirs.Push(str);
                 }
-                catch (System.IO.DirectoryNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-                foreach (string str in subDirs)
-                    dirs.Push(str);
+                WorkCompleted();
             }
         }
 
